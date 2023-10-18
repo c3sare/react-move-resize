@@ -18,6 +18,8 @@ export default function Konva() {
     id: "1",
     x: 0,
     y: 0,
+    width: 100,
+    height: 100,
     rotation: 0,
     isDragging: false,
   });
@@ -52,6 +54,7 @@ export default function Konva() {
           />
         </Layer>
       </Stage>
+      <button onClick={() => console.log(img)}>get data</button>
     </div>
   );
 }

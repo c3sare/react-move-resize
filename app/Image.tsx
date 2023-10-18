@@ -51,6 +51,8 @@ const Image: React.FC<ImageProps> = ({
     setImg((prev) => {
       return {
         ...prev,
+        x: Math.floor(e.target.x()),
+        y: Math.floor(e.target.y()),
         isDragging: false,
       };
     });
@@ -80,6 +82,28 @@ const Image: React.FC<ImageProps> = ({
     e.currentTarget.setAbsolutePosition(newAbsPos);
   };
 
+  const onTransformEnd = (e: KonvaEventObject<Event>) => {
+    // transformer is changing scale of the node
+    // and NOT its width or height
+    // but in the store we have only width and height
+    // to matchr the data better we will eset scale on transform end
+    const node = imageRef.current!;
+    const scaleX = node.scaleX();
+    const scaleY = node.scaleY();
+
+    // we will reset it back
+    node.scaleX(1);
+    node.scaleY(1);
+    setImg((prev) => ({
+      ...prev,
+      x: Math.floor(node.x()),
+      y: Math.floor(node.y()),
+      rotation: Math.round(node.rotation()),
+      width: Math.ceil(Math.max(5, node.width() * scaleX)),
+      height: Math.ceil(Math.max(node.height() * scaleY)),
+    }));
+  };
+
   return (
     <>
       <ImageCanvas
@@ -91,14 +115,23 @@ const Image: React.FC<ImageProps> = ({
         id={img.id}
         x={img.x}
         y={img.y}
+        width={img.width}
+        height={img.height}
         draggable
         rotation={img.rotation}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragMove={handleDragMove}
+        onTransformEnd={onTransformEnd}
       />
       {isSelected && (
         <Transformer
+          enabledAnchors={[
+            "top-left",
+            "top-right",
+            "bottom-left",
+            "bottom-right",
+          ]}
           ref={trRef}
           boundBoxFunc={(oldBox: Box, newBox: Box) => {
             const box = getClientRect(newBox);
