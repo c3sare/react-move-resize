@@ -15,7 +15,6 @@ const imageUrl =
   "https://lh3.googleusercontent.com/u/0/drive-viewer/AK7aPaBeXyyD6O-3We-k_1DfjN5imdR_8nVBkZIcZu6FiHSHMfggZ21pz5NQE5Pr_XLb05mTiaqBOTR9az1BYAYrYOmBMuaICw=w1920-h931";
 
 export default function Canvas() {
-  const [link, setLink] = useState<React.ReactNode>(null);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [selectedId, selectShape] = React.useState<string | null>(null);
   const stage = useRef<Konva.Stage>(null);
@@ -84,8 +83,6 @@ export default function Canvas() {
   };
 
   const getTaskResult = () => {
-    if (!taskId) return console.log("Any task id provided!");
-
     fetch(`/api/get-task`, {
       headers: {
         "Content-Type": "application/json",
@@ -98,17 +95,15 @@ export default function Canvas() {
       .then((res) => res.json())
       .then((data) => {
         const href = data.result?.mockups?.[0]?.mockup_url;
-        if (href)
-          setLink(
-            <a
-              className="p-2 bg-black text-white mx-1"
-              href={data.result.mockups[0].mockup_url}
-              target="_blank"
-            >
-              Generated Mockup
-            </a>
-          );
-        else console.log(data);
+        if (href) {
+          const link = document.createElement("a");
+          link.href = data.result.mockups[0].mockup_url;
+          link.target = "_blank";
+          document.body.append(link);
+          link.click();
+          link.remove();
+          setTaskId(null);
+        } else console.log(data);
       });
   };
 
@@ -138,12 +133,8 @@ export default function Canvas() {
           </Layer>
         </Stage>
       </Shirt>
-      <Button onClick={() => console.log(handleGetImageData())}>
-        Get Data
-      </Button>
-      <Button onClick={handleSendParams}>Send Data</Button>
-      <Button onClick={getTaskResult}>Get Mockup</Button>
-      {link}
+      {taskId === null && <Button onClick={handleSendParams}>Send Data</Button>}
+      {taskId !== null && <Button onClick={getTaskResult}>Get Mockup</Button>}
     </>
   );
 }
