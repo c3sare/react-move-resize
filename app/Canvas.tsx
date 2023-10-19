@@ -1,21 +1,21 @@
 "use client";
 
-import type { Stage as StageType } from "konva/lib/Stage";
-
 import React, { useRef } from "react";
 import useImage from "use-image";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Stage, Layer } from "react-konva";
 
-import ImgKonva from "./ImgKonva";
-import { ImgParamsType } from "./types/ImgParamsType";
+import ImgKonva from "./_components/ImgKonva";
+import { ImgParamsType } from "./_types/ImgParamsType";
+import Konva from "konva";
 
-export default function Konva() {
+export default function Canvas() {
   const [selectedId, selectShape] = React.useState<string | null>(null);
-  const stage = useRef<StageType>(null);
+  const stage = useRef<Konva.Stage>(null);
+  const layer = useRef<Konva.Layer>(null);
   const [image] = useImage("https://konvajs.org/assets/lion.png");
-  const [img, setImg] = React.useState<ImgParamsType>({
-    id: "1",
+  const [data, setData] = React.useState<ImgParamsType>({
+    id: "mockup",
     x: 0,
     y: 0,
     width: 100,
@@ -25,14 +25,13 @@ export default function Konva() {
   });
 
   const checkDeselect = (e: KonvaEventObject<TouchEvent | MouseEvent>) => {
-    // deselect when clicked on empty area
     const clickedOnEmpty = e.target === e.target.getStage();
     if (clickedOnEmpty) {
       selectShape(null);
     }
   };
 
-  const isSelected = selectedId === img.id;
+  const isSelected = selectedId === data.id;
 
   return (
     <div className="w-[300px] h-[400px] mx-auto border">
@@ -43,18 +42,19 @@ export default function Konva() {
         onMouseDown={checkDeselect}
         onTouchStart={checkDeselect}
       >
-        <Layer>
+        <Layer ref={layer}>
           <ImgKonva
-            img={img}
+            data={data}
             image={image!}
-            setImg={setImg}
-            onSelect={() => selectShape(img.id)}
+            setData={setData}
+            onSelect={() => selectShape(data.id)}
             stage={stage.current!}
             isSelected={isSelected}
+            layer={layer.current!}
           />
         </Layer>
       </Stage>
-      <button onClick={() => console.log(img)}>get data</button>
+      <button onClick={() => console.log(data)}>get data</button>
     </div>
   );
 }

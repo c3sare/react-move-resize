@@ -7,10 +7,8 @@ export default function getCorner(
 ) {
   const distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
-  /// find angle from pivot to corner
   angle += Math.atan2(diffY, diffX);
 
-  /// get new x and y and round it off to integer
   const x = pivotX + distance * Math.cos(angle);
   const y = pivotY + distance * Math.sin(angle);
 
