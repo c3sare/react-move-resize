@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "clsx": "^2.0.0",
     "konva": "^9.2.2",
     "next": "13.5.5",
     "react": "^18",

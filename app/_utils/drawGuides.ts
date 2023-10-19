@@ -9,10 +9,9 @@ const drawGuides = (
     if (lg.orientation === "H") {
       const line = new Konva.Line({
         points: [-6000, 0, 6000, 0],
-        stroke: "rgb(0, 161, 255)",
-        strokeWidth: 1,
+        stroke: "#0e5e8e",
+        strokeWidth: 2,
         name: "guid-line",
-        dash: [4, 6],
       });
       layer.add(line);
       line.absolutePosition({
@@ -22,10 +21,9 @@ const drawGuides = (
     } else if (lg.orientation === "V") {
       const line = new Konva.Line({
         points: [0, -6000, 0, 6000],
-        stroke: "rgb(0, 161, 255)",
-        strokeWidth: 1,
+        stroke: "#0e5e8e",
+        strokeWidth: 2,
         name: "guid-line",
-        dash: [4, 6],
       });
       layer.add(line);
       line.absolutePosition({

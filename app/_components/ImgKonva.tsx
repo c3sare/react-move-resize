@@ -46,6 +46,7 @@ const ImgKonva: React.FC<ImgKonvaProps> = ({
 
   const handleDragStart = (e: KonvaEventObject<DragEvent>) => {
     const id = e.target.id();
+    onSelect();
     setData((prev) => {
       return {
         ...prev,
@@ -57,8 +58,8 @@ const ImgKonva: React.FC<ImgKonvaProps> = ({
     setData((prev) => {
       return {
         ...prev,
-        x: Math.floor(e.target.x()),
-        y: Math.floor(e.target.y()),
+        x: e.target.x(),
+        y: e.target.y(),
         isDragging: false,
       };
     });
@@ -82,19 +83,19 @@ const ImgKonva: React.FC<ImgKonvaProps> = ({
     const box = e.currentTarget.getClientRect();
     const absPos = e.currentTarget.getAbsolutePosition();
 
-    const offsetX = Math.round(box.x - absPos.x);
-    const offsetY = Math.round(box.y - absPos.y);
+    const offsetX = box.x - absPos.x;
+    const offsetY = box.y - absPos.y;
 
     guides.forEach((lg) => {
       switch (lg.snap) {
         case "start": {
           switch (lg.orientation) {
             case "V": {
-              absPos.x = Math.round(lg.lineGuide + lg.offset);
+              absPos.x = lg.lineGuide + lg.offset;
               break;
             }
             case "H": {
-              absPos.y = Math.round(lg.lineGuide + lg.offset);
+              absPos.y = lg.lineGuide + lg.offset;
               break;
             }
           }
@@ -103,11 +104,11 @@ const ImgKonva: React.FC<ImgKonvaProps> = ({
         case "center": {
           switch (lg.orientation) {
             case "V": {
-              absPos.x = Math.round(lg.lineGuide + lg.offset);
+              absPos.x = lg.lineGuide + lg.offset;
               break;
             }
             case "H": {
-              absPos.y = Math.round(lg.lineGuide + lg.offset);
+              absPos.y = lg.lineGuide + lg.offset;
               break;
             }
           }
@@ -116,11 +117,11 @@ const ImgKonva: React.FC<ImgKonvaProps> = ({
         case "end": {
           switch (lg.orientation) {
             case "V": {
-              absPos.x = Math.round(lg.lineGuide + lg.offset);
+              absPos.x = lg.lineGuide + lg.offset;
               break;
             }
             case "H": {
-              absPos.y = Math.round(lg.lineGuide + lg.offset);
+              absPos.y = lg.lineGuide + lg.offset;
               break;
             }
           }
@@ -130,16 +131,16 @@ const ImgKonva: React.FC<ImgKonvaProps> = ({
     });
 
     if (box.x < 0) {
-      absPos.x = Math.round(-offsetX);
+      absPos.x = -offsetX;
     }
     if (box.y < 0) {
-      absPos.y = Math.round(-offsetY);
+      absPos.y = -offsetY;
     }
     if (box.x + box.width > stage.width()) {
-      absPos.x = Math.round(stage.width() - box.width - offsetX);
+      absPos.x = stage.width() - box.width - offsetX;
     }
     if (box.y + box.height > stage.height()) {
-      absPos.y = Math.round(stage.height() - box.height - offsetY);
+      absPos.y = stage.height() - box.height - offsetY;
     }
     e.currentTarget.setAbsolutePosition(absPos);
   };
@@ -154,11 +155,12 @@ const ImgKonva: React.FC<ImgKonvaProps> = ({
 
     setData((prev) => ({
       ...prev,
-      x: Math.floor(node.x()),
-      y: Math.floor(node.y()),
+      x: node.x(),
+      y: node.y(),
       rotation: Math.round(node.rotation()),
-      width: Math.ceil(Math.max(5, node.width() * scaleX)),
-      height: Math.ceil(Math.max(node.height() * scaleY)),
+      width: Math.max(5, node.width() * scaleX),
+      height: Math.max(node.height() * scaleY),
+      isDragging: false,
     }));
   };
 
@@ -196,6 +198,10 @@ const ImgKonva: React.FC<ImgKonvaProps> = ({
           ]}
           ref={trRef}
           boundBoxFunc={(oldBox: Box, newBox: Box) => {
+            setData((prev) => ({
+              ...prev,
+              isDragging: true,
+            }));
             const box = getClientRect(newBox);
             const isOut =
               box.x < 0 ||
