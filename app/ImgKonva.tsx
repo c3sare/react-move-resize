@@ -11,7 +11,7 @@ import { KonvaEventObject } from "konva/lib/Node";
 import { ImgParamsType } from "./types/ImgParamsType";
 import getClientRect from "./utils/getClientRect";
 
-type ImageProps = {
+type ImgKonvaProps = {
   onSelect: () => void;
   image: HTMLImageElement;
   isSelected: boolean;
@@ -20,7 +20,7 @@ type ImageProps = {
   stage: StageType;
 };
 
-const Image: React.FC<ImageProps> = ({
+const ImgKonva: React.FC<ImgKonvaProps> = ({
   onSelect,
   image,
   isSelected,
@@ -61,11 +61,10 @@ const Image: React.FC<ImageProps> = ({
   const handleDragMove = (e: KonvaEventObject<DragEvent>) => {
     const box = e.currentTarget.getClientRect();
     const absPos = e.currentTarget.getAbsolutePosition();
-    // where are shapes inside bounding box of all shapes?
+
     const offsetX = box.x - absPos.x;
     const offsetY = box.y - absPos.y;
 
-    // we total box goes outside of viewport, we need to move absolute position of shape
     const newAbsPos = { ...absPos };
     if (box.x < 0) {
       newAbsPos.x = -offsetX;
@@ -83,17 +82,13 @@ const Image: React.FC<ImageProps> = ({
   };
 
   const onTransformEnd = (e: KonvaEventObject<Event>) => {
-    // transformer is changing scale of the node
-    // and NOT its width or height
-    // but in the store we have only width and height
-    // to matchr the data better we will eset scale on transform end
     const node = imageRef.current!;
     const scaleX = node.scaleX();
     const scaleY = node.scaleY();
 
-    // we will reset it back
     node.scaleX(1);
     node.scaleY(1);
+
     setImg((prev) => ({
       ...prev,
       x: Math.floor(node.x()),
@@ -126,6 +121,10 @@ const Image: React.FC<ImageProps> = ({
       />
       {isSelected && (
         <Transformer
+          keepRatio
+          flipEnabled={false}
+          rotationSnapTolerance={5}
+          rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
           enabledAnchors={[
             "top-left",
             "top-right",
@@ -152,4 +151,4 @@ const Image: React.FC<ImageProps> = ({
   );
 };
 
-export default Image;
+export default ImgKonva;

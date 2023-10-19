@@ -7,7 +7,7 @@ import useImage from "use-image";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Stage, Layer } from "react-konva";
 
-import Image from "./Image";
+import ImgKonva from "./ImgKonva";
 import { ImgParamsType } from "./types/ImgParamsType";
 
 export default function Konva() {
@@ -44,7 +44,7 @@ export default function Konva() {
         onTouchStart={checkDeselect}
       >
         <Layer>
-          <Image
+          <ImgKonva
             img={img}
             image={image!}
             setImg={setImg}
