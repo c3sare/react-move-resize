@@ -1,6 +1,6 @@
 "use client";
 
-import bgImage from "@/public/shirt.png";
+import bgImage from "@/public/bg.png";
 
 import dynamic from "next/dynamic";
 const Canvas = dynamic(() => import("./Canvas"), { ssr: false });
